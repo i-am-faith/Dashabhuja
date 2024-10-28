@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-dupe-keys */
 /* eslint-disable react-native/no-inline-styles */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StatusBar, Text, TouchableOpacity, View, Image, Alert, PermissionsAndroid, Platform } from 'react-native';
 import Shake from 'react-native-shake';
 import BackgroundService from 'react-native-background-actions';
@@ -11,15 +11,52 @@ import Geolocation from '@react-native-community/geolocation';
 import { SendDirectSms } from 'react-native-send-direct-sms';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import { useNavigation } from '@react-navigation/native';
-import { Bell, Shield, MapPin, Volume2, AlertCircle, Award, BookOpen, Briefcase, UserSearch, ShoppingBag } from 'lucide-react-native';
+import TrackPlayer from 'react-native-track-player';
+
+import { Bell, Shield, MapPin, Volume2, AlertCircle, Award, BookOpen, Briefcase, UserSearch, ShoppingBag, HeartPulseIcon, VolumeX } from 'lucide-react-native';
 import axios from 'axios';
 import HeaderTab from './HeaderTab';
+import { set } from 'mongoose';
 
 const Home = (props) => {
   const { userdata } = props.route.params;
   console.log('userdata', userdata);
+  const [sosPlaying, setSosPlaying] = useState(false);
   const navigation = useNavigation();
 
+  const setupPlayer = async () => {
+    try {
+      await TrackPlayer.setupPlayer();
+    } catch (error) {
+      console.log('Error in setupPlayer', error);
+    }
+  };
+  const playSOSSound = async () => {
+    if(sosPlaying){
+      TrackPlayer.stop();
+      setSosPlaying(false);
+      return;
+    }
+    try {
+      const track = await TrackPlayer.add({
+        id: 'sos',
+        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        title: 'SOS',
+        artist: 'SOS',
+        genre: 'SOS',
+        date: new Date(),
+      });
+      await TrackPlayer.play();
+      setSosPlaying(true);
+      setTimeout(() => {
+        TrackPlayer.stop();
+        TrackPlayer.reset();
+        
+      }, 30000); 
+    } catch (error) {
+      console.log('Error in playSOSSound', error);
+    }
+  };
   const navigateToSOSAlertSettings = () => {
     navigation.navigate('SOSAlertSettings',{ userdata });
   };
@@ -28,11 +65,10 @@ const Home = (props) => {
   }
   const handleNavigateToShop = () => {
     navigation.navigate('Shop', { userdata });
-  }
+  };
   const handleNavigatetoCommunity = () => {
     navigation.navigate('Community', { userdata });
-  }
-  
+  };
   const requestLocationPermission = async () => {
     try {
       console.log('Requesting location permission...');
@@ -56,7 +92,6 @@ const Home = (props) => {
       return false;
     }
   };
-
   const fetchCurrentLocation = async () => {
     const hasPermission = await requestLocationPermission();
     if (!hasPermission) {
@@ -74,7 +109,6 @@ const Home = (props) => {
       { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
     );
   };
-
   const emergencySOS = async () => {
     try {
       console.log('Finding location...');
@@ -84,10 +118,10 @@ const Home = (props) => {
           console.log('Location found:', latitude, longitude);
           console.log('Sending SMS...');
           const message = `Emergency! Here's my location: https://maps.google.com/?q=${latitude},${longitude}`;
-          SendDirectSms('9038471652', message);
+          SendDirectSms('9832694658', message);
           console.log('SMS sent');
           console.log('Sending call...');
-          RNImmediatePhoneCall.immediatePhoneCall('9038471652');
+          RNImmediatePhoneCall.immediatePhoneCall('9832694658');
           console.log('Call Initiated');
         },
         (error) => {
@@ -99,12 +133,11 @@ const Home = (props) => {
       console.log('Error in emergencySOS', error);
     }
   };
-
-  
   
   useEffect(() => {
     requestLocationPermission();
     fetchCurrentLocation();
+    setupPlayer();
     const shakeSubscription = Shake.addListener(() => {
       console.log('Shake detected');
       emergencySOS().catch(error => console.log('Error in emergencySOS', error));
@@ -165,22 +198,35 @@ const Home = (props) => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={{ flex: 1, height: 125, borderRadius: 10, backgroundColor: '#FFFFFF', elevation: 2, alignItems: 'center', justifyContent: 'center' }}>
-          <Volume2 color="#000000" size={28} style={{ marginBottom: 5 }} />
-          <Text style={{ color: '#000000', fontSize: 18, fontFamily: 'Ubuntu-Regular' }}>
-            Safety Alarm
-          </Text>
-          <Text style={{ color: 'grey', fontSize: 13, fontFamily: 'Ubuntu-Light' }}>
-            Trigger loud alert
-          </Text>
+        <TouchableOpacity style={{ flex: 1, height: 125, borderRadius: 10, backgroundColor: '#FFFFFF', elevation: 2, alignItems: 'center', justifyContent: 'center' }}
+        onPress={()=>{playSOSSound()}}
+        >
+          {!sosPlaying ? (
+            <>
+              <Volume2 color="#000000" size={28} style={{ marginBottom: 5 }} />
+              <Text style={{ color: '#000000', fontSize: 18, fontFamily: 'Ubuntu-Regular' }}>
+                Safety Alarm
+              </Text>
+              <Text style={{ color: 'grey', fontSize: 13, fontFamily: 'Ubuntu-Light' }}>
+                Trigger loud alert
+              </Text>
+            </>
+          ) : (
+            <>
+              <VolumeX color="red" size={28} style={{ marginBottom: 5 }} />
+              <Text style={{ color: '#000000', fontSize: 18, fontFamily: 'Ubuntu-Regular' }}>
+                Safety Alarm
+              </Text>
+              <Text style={{ color: 'grey', fontSize: 13, fontFamily: 'Ubuntu-Light' }}>
+                Trigger silent alert
+              </Text>
+            </>
+          )}
         </TouchableOpacity>
 
       </View>
-
       <View />
-
       <View style={{ paddingTop: 10 }}>
-
         <TouchableOpacity style={{ backgroundColor: '#FEF2F2', height: 90, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}
         onPress={()=>{navigateToReportIncidents()}}
         >
@@ -195,7 +241,7 @@ const Home = (props) => {
 
         <TouchableOpacity style={{ marginTop: 8, backgroundColor: '#EFF6FF', height: 90, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}>
           <View style={{ backgroundColor: '#FFFFFF', padding: 8, borderRadius: 30, marginRight: 10 }}>
-            <Award color="#2563EB" size={28} />
+            <HeartPulseIcon color="#2563EB" size={28} />
           </View>
           <View style={{ marginRight: 'auto' }}>
             <Text style={{ color: '#111827', fontSize: 20, fontFamily: 'Ubuntu-Regular' }}>Self Defense</Text>

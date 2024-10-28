@@ -11,6 +11,7 @@ import Shop from './Screens/Shop';
 import Community from './Screens/Community';
 import NewPost from './Screens/NewPost';
 import Incidents from './Screens/Incidents';
+import ViewPost from './Screens/ViewPost';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,7 @@ const App = () => {
         <Stack.Screen name="Community" component={Community} options={{ headerShown: false }} />
         <Stack.Screen name="NewPost" component={NewPost} options={{ headerShown: false }} />
         <Stack.Screen name="Incidents" component={Incidents} options={{ headerShown: false }} />
+        <Stack.Screen name="ViewPost" component={ViewPost} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
