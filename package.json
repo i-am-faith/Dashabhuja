@@ -17,9 +17,11 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@react-navigation/stack": "^6.4.1",
+    "@rnmapbox/maps": "^10.1.33",
     "axios": "^1.7.7",
     "cloudinary-react-native": "^1.0.1",
     "formik": "^2.4.6",
+    "lottie-react-native": "^7.0.0",
     "lucide-react-native": "^0.447.0",
     "react": "18.3.1",
     "react-native": "0.75.3",
@@ -37,6 +39,8 @@
     "react-native-svg": "^15.7.1",
     "react-native-svg-transformer": "^1.5.0",
     "react-native-track-player": "^4.1.1",
+    "react-native-typewriter": "^0.7.0",
+    "react-native-webview": "^13.12.3",
     "yup": "^1.4.0"
   },
   "devDependencies": {

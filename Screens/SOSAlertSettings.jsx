@@ -1,12 +1,13 @@
+/* eslint-disable react-native/no-inline-styles */
 import { SafeAreaView, StatusBar, StyleSheet, Text, View, TouchableOpacity, Image, Switch, TextInput, ScrollView, ToastAndroid, Alert, ActivityIndicator } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bell, CircleUserRound, MessageSquare, Phone } from 'lucide-react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 const SOSAlertSettings = (props) => {
   const { userdata } = props.route.params;
   // console.log('userdata', userdata);
-  
+
   const [autoSMS, setAutoSMS] = useState(true);
   const [autoCall, setAutoCall] = useState(true);
   const [smsContact1, setSMSContact1] = useState('');
@@ -15,16 +16,28 @@ const SOSAlertSettings = (props) => {
   const [showLoader, setShowLoader] = useState(false);
   const navigation = useNavigation();
 
-  const handleSaveSettings = async () => {
-    // Log the input values to the console
-    // console.log('Auto SMS:', autoSMS);
-    // console.log('Auto Call:', autoCall);
-    // console.log('SMS Contact 1:', smsContact1);
-    // console.log('SMS Contact 2:', smsContact2);
-    // console.log('Call Contact:', callContact);
-    
-    // Implement save settings logic here
+
+  const getStatusofCurrentUser = async () => {
+    ToastAndroid.showWithGravityAndOffset(
+      'Fetching Current Status',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
     setShowLoader(true);
+    const updatedUser = await axios.post('http://192.168.29.15:3000/api/v1/user/get', { email: userdata.email });
+    setAutoSMS(updatedUser.data.autoSMS);
+    setAutoCall(updatedUser.data.autoCall);
+    setSMSContact1(updatedUser.data.trustedContactsSMS[0]);
+    setSMSContact2(updatedUser.data.trustedContactsSMS[1]);
+    setCallContact(updatedUser.data.trustedContactPhone);
+    console.log('Updated user: ---> ', updatedUser.data);
+    setShowLoader(false);
+  }
+
+  const handleSaveSettings = async () => {
+     setShowLoader(true);
     try {
       const smsConst = [...new Set([smsContact1, smsContact2])];
       const user = {
@@ -32,24 +45,32 @@ const SOSAlertSettings = (props) => {
         trustedContactsSMS: smsConst,
         trustedContactsPhone: callContact,
         autoSMS: autoSMS,
-        autoCall: autoCall
-      }
+        autoCall: autoCall,
+      };
+
+      console.log('Saving settings: before swend', user);
       const response = await axios.post('http://192.168.29.15:3000/api/v1/user/update', user);
       console.log('Save settings response:', response.data);
       ToastAndroid.showWithGravityAndOffset(
         'Settings saved successfully',
-        ToastAndroid.SHORT,
+        ToastAndroid.LONG,
         ToastAndroid.BOTTOM,
         25,
         50
-      )
-      navigation.navigate('Home', { userdata });
+      );
+      const updatedUser = await axios.post('http://192.168.29.15:3000/api/v1/user/get', { email: userdata.email });
+      console.log('Updated user: ---> ', updatedUser.data);
+      navigation.navigate('Home', { userdata: updatedUser.data });
       setShowLoader(false);
     } catch (error) {
+      console.error('Error:', error);
       Alert.alert('Error', 'Error saving settings. Please try again later.');
     }
-  }
+  };
 
+  useEffect(() => {
+    getStatusofCurrentUser();
+  }, []);
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', height: '100%', padding: 4, flex: 1 }}>
       <View style={{
@@ -60,7 +81,7 @@ const SOSAlertSettings = (props) => {
         bottom: 0,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(255,255,255,0.5)'
+        backgroundColor: 'rgba(255,255,255,0.5)',
       }}>
         <ActivityIndicator size="large" color="#E90074" animating={showLoader} />
       </View>

@@ -12,6 +12,10 @@ import Community from './Screens/Community';
 import NewPost from './Screens/NewPost';
 import Incidents from './Screens/Incidents';
 import ViewPost from './Screens/ViewPost';
+import Alert from './Screens/Alert';
+import Yoga from './Screens/Yoga';
+import Footprints from './Screens/Footprints';
+
 
 const Stack = createStackNavigator();
 
@@ -19,9 +23,9 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Login" component={Login}  options={{ headerShown: false }}/>
         <Stack.Screen name="Splash" component={Splash}  options={{ headerShown: false }}/>
         <Stack.Screen name="Signup" component={Signup}  options={{ headerShown: false }}/>
+        <Stack.Screen name="Login" component={Login}  options={{ headerShown: false }}/>
         <Stack.Screen name="Home" component={Home}  options={{ headerShown: false }}/>
         <Stack.Screen name="ReportingIncidents" component={ReportIncidents}  options={{ headerShown: false }}/>
         <Stack.Screen name="SOSAlertSettings" component={SOSAlertSettings} options={{ headerShown: false }} />
@@ -30,6 +34,9 @@ const App = () => {
         <Stack.Screen name="NewPost" component={NewPost} options={{ headerShown: false }} />
         <Stack.Screen name="Incidents" component={Incidents} options={{ headerShown: false }} />
         <Stack.Screen name="ViewPost" component={ViewPost} options={{ headerShown: false }} />
+        <Stack.Screen name="Alert" component={Alert} options={{ headerShown: false }} />
+        <Stack.Screen name="Yoga" component={Yoga} options={{ headerShown: false }} />
+        <Stack.Screen name="Footprints" component={Footprints} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
