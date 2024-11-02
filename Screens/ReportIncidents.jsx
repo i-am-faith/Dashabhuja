@@ -1,10 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, SafeAreaView, StatusBar, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, SafeAreaView, StatusBar, Image, Alert, ScrollView } from 'react-native';
 import { AlertCircle, Camera, Bell } from 'lucide-react-native';
 import { pick } from 'react-native-document-picker';
 import axios from 'axios';
 import HeaderTab from './HeaderTab';
+import LottieView from 'lottie-react-native';
 
 export default function ReportIncidents(props) {
   const { userdata } = props.route.params;
@@ -38,7 +39,7 @@ export default function ReportIncidents(props) {
     console.log(formData);
 
     try {
-      const response = await axios.post('http://192.168.29.15:3000/api/v1/incident/create', formData, {
+      const response = await axios.post('https://siddharthapro.in/app4/api/v1/incident/create', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -71,10 +72,20 @@ export default function ReportIncidents(props) {
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', height: '100%', padding: 4 }}>
       <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-      <HeaderTab/>
-      <View style={{ padding: 16 }}>
+      <HeaderTab />
+      <ScrollView style={{ padding: 16 }}>
+        <LottieView
+          source={require('../Screens/Assets/Alert.json')}
+          autoPlay
+          loop
+          style={{ width: '100%', height: 250, marginBottom: 16 }}
+        />
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 8, color: '#333' }}>Report Title</Text>
+          <Text style={{ fontSize: 20, marginBottom: 12, color: '#444', fontFamily: 'Ubuntu-Regular' }}>Anonymously Report Incidents</Text>
+          <Text style={{ fontSize: 16, marginBottom: 22, color: '#444', fontFamily: 'Ubuntu-Light' }}>Your voice matters. By sharing incidents, you help create safer spaces and empower others with awareness. All reports can be made anonymously, and your privacy is our priority.
+          </Text>
+
+          <Text style={{ fontSize: 16, marginBottom: 8, color: '#444', fontFamily: 'Ubuntu-Regular' }}>Title of the Report</Text>
           <TextInput
             style={{
               borderWidth: 1,
@@ -91,7 +102,7 @@ export default function ReportIncidents(props) {
         </View>
 
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 8, color: '#333' }}>Report Description</Text>
+          <Text style={{ fontSize: 16, marginBottom: 8, color: '#333', fontFamily: 'Ubuntu-Regular' }}>Report Description</Text>
           <TextInput
             style={{
               borderWidth: 1,
@@ -136,6 +147,7 @@ export default function ReportIncidents(props) {
             justifyContent: 'center',
             padding: 16,
             borderRadius: 8,
+            marginBottom: 26,
           }}
           onPress={handleSubmit}
           disabled={isLoading}
@@ -149,7 +161,7 @@ export default function ReportIncidents(props) {
             </>
           )}
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

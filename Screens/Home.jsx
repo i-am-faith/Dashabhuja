@@ -134,7 +134,7 @@ const Home = (props) => {
 
       try {
         const response = await axios.post(
-          'http://192.168.29.15:3000/api/v1/user/update-recent-location',
+          'https://siddharthapro.in/app4/api/v1/user/update-recent-location',
           { email: userdata.email, latitude, longitude }
         );
         console.log('Update recent location response:', response.data);
@@ -161,7 +161,7 @@ const Home = (props) => {
 
       try {
         const alertResponse = await axios.post(
-          'http://192.168.29.15:3000/api/v1/user/fetch-alerts',
+          'https://siddharthapro.in/app4/api/v1/user/fetch-alerts',
           { email: userdata.email, latitude, longitude }
         );
         // console.log('Alert response:', alertResponse.data);
@@ -261,7 +261,7 @@ const Home = (props) => {
 
       // Trigger Alert API
       const response = await axios.post(
-        'http://192.168.29.15:3000/api/v1/user/trigger-alert',
+        'https://siddharthapro.in/app4/api/v1/user/trigger-alert',
         { email: userdata.email, latitude, longitude }
       );
       console.log('Trigger alert response:', response.data);
@@ -316,7 +316,10 @@ const Home = (props) => {
       <HeaderTab />
       <ScrollView style={{ height: '100%', backgroundColor: '#FFFFFF' }}>
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Image source={require('../assets/maadurga.jpg')} style={{ width: '50%', height: 180 }} />
+          <Image
+            source={require('../assets/dashabhuja.png')}
+            style={{ width: 300, height: 300, marginBottom: 20, alignSelf: 'center' }}
+          />
         </View>
 
         <View style={{ marginTop: 0, borderTopColor: '#4A4947', borderTopWidth: 1, paddingTop: 8 }}>
@@ -338,7 +341,7 @@ const Home = (props) => {
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
 
-          <TouchableOpacity style={{ flex: 1, height: 125, elevation: 4, borderRadius: 10, backgroundColor: '#FFFFFF', elevation: 2, alignItems: 'center', justifyContent: 'center' }}
+          <TouchableOpacity style={{ flex: 1, height: 105, elevation: 4, borderRadius: 10, backgroundColor: '#FFFFFF', elevation: 2, alignItems: 'center', justifyContent: 'center' }}
             onPress={navigateToSOSAlertSettings}
           >
             <Shield color="#000000" size={28} style={{ marginBottom: 5 }} />
@@ -350,7 +353,7 @@ const Home = (props) => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={{ flex: 1, height: 125, borderRadius: 10, backgroundColor: '#FFFFFF', elevation: 2, alignItems: 'center', justifyContent: 'center', marginLeft: 4, marginRight: 4 }}
+          <TouchableOpacity style={{ flex: 1, height: 105, borderRadius: 10, backgroundColor: '#FFFFFF', elevation: 2, alignItems: 'center', justifyContent: 'center', marginLeft: 4, marginRight: 4 }}
             onPress={handleNavigatetoFootprints}
           >
             <Footprints color="#000000" size={28} style={{ marginBottom: 5 }} />
@@ -415,7 +418,7 @@ const Home = (props) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={{ marginTop: 8, backgroundColor: '#ECFDF5', height: 90, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}
+          {/* <TouchableOpacity style={{ marginTop: 8, backgroundColor: '#ECFDF5', height: 90, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}
             onPress={() => { handleNavigateToShop(); }}
           >
             <View style={{ backgroundColor: '#FFFFFF', padding: 8, borderRadius: 30, marginRight: 10 }}>
@@ -425,7 +428,7 @@ const Home = (props) => {
               <Text style={{ color: '#111827', fontSize: 20, fontFamily: 'Ubuntu-Regular' }}>Shop</Text>
               <Text style={{ color: '#4B5563', fontSize: 14, fontFamily: 'Ubuntu-Light' }}>Empower businesses run by women</Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity style={{ marginTop: 8, backgroundColor: '#F5F3FF', height: 90, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}
             onPress={() => { handleNavigatetoCommunity(); }}

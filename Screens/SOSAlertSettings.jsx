@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import { SafeAreaView, StatusBar, StyleSheet, Text, View, TouchableOpacity, Image, Switch, TextInput, ScrollView, ToastAndroid, Alert, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
@@ -26,7 +27,7 @@ const SOSAlertSettings = (props) => {
       50
     );
     setShowLoader(true);
-    const updatedUser = await axios.post('http://192.168.29.15:3000/api/v1/user/get', { email: userdata.email });
+    const updatedUser = await axios.post('https://siddharthapro.in/app4/api/v1/user/get', { email: userdata.email });
     setAutoSMS(updatedUser.data.autoSMS);
     setAutoCall(updatedUser.data.autoCall);
     setSMSContact1(updatedUser.data.trustedContactsSMS[0]);
@@ -49,7 +50,7 @@ const SOSAlertSettings = (props) => {
       };
 
       console.log('Saving settings: before swend', user);
-      const response = await axios.post('http://192.168.29.15:3000/api/v1/user/update', user);
+      const response = await axios.post('https://siddharthapro.in/app4/api/v1/user/update', user);
       console.log('Save settings response:', response.data);
       ToastAndroid.showWithGravityAndOffset(
         'Settings saved successfully',
@@ -58,7 +59,7 @@ const SOSAlertSettings = (props) => {
         25,
         50
       );
-      const updatedUser = await axios.post('http://192.168.29.15:3000/api/v1/user/get', { email: userdata.email });
+      const updatedUser = await axios.post('https://siddharthapro.in/app4/api/v1/user/get', { email: userdata.email });
       console.log('Updated user: ---> ', updatedUser.data);
       navigation.navigate('Home', { userdata: updatedUser.data });
       setShowLoader(false);

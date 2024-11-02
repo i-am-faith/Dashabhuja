@@ -16,7 +16,7 @@ const Splash = () => {
   const checkConnection = async () => {
     try {
       console.log('Checking internet connection...');
-      const isConnected = await axios.get('http://192.168.29.15:3000/');
+      const isConnected = await axios.get('https://siddharthapro.in/app4/');
       if (isConnected) {
         console.log('Internet is connected!', isConnected.data);
       } else {

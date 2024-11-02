@@ -16,7 +16,7 @@ const Community = (props) => {
   const getPosts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://192.168.29.15:3000/api/v1/community/get');
+      const response = await axios.get('https://siddharthapro.in/app4/api/v1/community/get');
       console.log(response.data);
       setPosts(response.data);
       setLoading(false);

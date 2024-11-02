@@ -15,7 +15,7 @@ const Incidents = () => {
   const getIncidents = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://192.168.29.15:3000/api/v1/incident/get');
+      const response = await axios.get('https://siddharthapro.in/app4/api/v1/incident/get');
       console.log(response.data);
       setIncidents(response.data);
       setLoading(false);

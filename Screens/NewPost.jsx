@@ -5,6 +5,7 @@ import HeaderTab from './HeaderTab';
 import axios from 'axios';
 import { pick } from 'react-native-document-picker';
 import { Camera, AlertCircle } from 'lucide-react-native';
+import LottieView from 'lottie-react-native';
 
 const NewPost = (props) => {
     const { userdata } = props.route.params;
@@ -39,7 +40,7 @@ const NewPost = (props) => {
         console.log(formData);
 
         try {
-            const response = await axios.post('http://192.168.29.15:3000/api/v1/community/create', formData, {
+            const response = await axios.post('https://siddharthapro.in/app4/api/v1/community/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -53,7 +54,7 @@ const NewPost = (props) => {
             setTitle('');
             setDescription('');
             setSelectedFile(null);
-            
+
         } catch (error) {
             console.log('Error:', error.response?.data || error.message);
         } finally {
@@ -81,6 +82,12 @@ const NewPost = (props) => {
             <HeaderTab />
             <ScrollView>
                 <View style={{ padding: 16 }}>
+                    <LottieView
+                        style={{ width: 380, height: 400 }}
+                        source={require('../Screens/Assets/Social.json')}
+                        autoPlay
+                        loop
+                    />
                     <View style={{ marginBottom: 16 }}>
                         <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 8, color: '#333' }}>Post Title</Text>
                         <TextInput
