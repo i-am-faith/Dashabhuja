@@ -1,18 +1,29 @@
-# Dashabhuja: Empowering Women’s Safety and Empowerment
+![Dashabhuja Logo](https://dashabhuja.vercel.app/assets/dashabhuja-DNyRbogA.png)
 
-Dashabhuja is a mobile app designed for women’s safety and empowerment, inspired by the resilience of the goddess Durga. It provides emergency SOS activation, alert notifications for trusted contacts, anonymous crime reporting, and a community space for women to share stories and successes. Features like live location sharing, safety alarms, and self-defense resources empower and secure women in various environments.
+# Dashabhuja: Empowering Women's Safety and Empowerment
+
+Dashabhuja is a mobile application dedicated to enhancing women's safety and empowerment, inspired by the resilience of the goddess Durga. The app offers a range of features including emergency SOS activation, alert notifications for trusted contacts, anonymous crime reporting, and a community space for sharing stories and successes. The app is designed to empower and secure women in various environments through features like live location sharing, safety alarms, and yoga training resources.
+
+## Features
+
+- **Emergency SOS**: Instantly share your live location with trusted contacts, and trigger automatic calls and SMS alerts for immediate assistance.
+- **Yoga AI**: Explore yoga poses, meditation techniques, and guided breathing exercises to enhance physical and mental well-being with the power of AI and Computer Vision.
+- **Live Footprints**: Track your location as you visit various places and share your journey to keep loved ones informed of your whereabouts.
+- **Anonymous Crime Reporting**: Report crimes anonymously, ensuring privacy and confidentiality.
+- **Community Space**: Learn about successful women and their stories.
+- **Safety Alarms**: Trigger alert signals to notify nearby app users in case of emergencies.
 
 ## Contribution Guide
 
-We welcome contributions from developers, designers, and anyone passionate about women’s safety and empowerment. To contribute:
+We welcome contributions from developers, designers, and anyone passionate about women's safety and empowerment. To contribute:
 
-1. Explore the [issues](https://github.com/siddharthamukherjee/Dashabhuja/issues) and [pull requests](https://github.com/siddharthamukherjee/Dashabhuja/pulls) tabs to find existing work or ideas.
+1. Explore the [issues](https://github.com/siddharthamukherjee/Dashabhuja/issues) and [pull requests](https://github.com/siddharthamukherjee/Dashabhuja/pulls) tabs for existing work or ideas.
 2. Comment on an issue you would like to work on, or propose a new feature by describing your intended changes.
-3. Collaborate with our team; we’ll get back to you promptly for any guidance or clarifications.
+3. Collaborate with our team; we’ll provide any necessary guidance or clarifications promptly.
 
 ## Installation and Setup Guide
 
-Please follow these steps to set up the project locally.
+Follow these steps to set up the project locally.
 
 ### Clone the Repository
 
@@ -20,52 +31,24 @@ Please follow these steps to set up the project locally.
 git clone https://github.com/siddharthamukherjee/Dashabhuja.git
 ```
 
-### Backend Setup
+### Setup
 
-1. Navigate to the Backend Directory
+1. Navigate to the project directory:
+   ```bash
+   cd Dashabhuja
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the server:
+   ```bash
+   npm start
+   ```
 
-    ```bash
-    cd Dashabhuja-Backend
-    ```
+**Note**: Ensure you have the React Native CLI installed and an Android device connected.
 
-2. Install Dependencies
+**Note**: Our backend server is hosted on Digital Ocean and can be accessed through the app. Currently, we do not provide a way to run it locally on your machine, but we will soon release the API documentation for the backend.
 
-    ```bash
-    npm install
-    ```
+With your support, Dashabhuja can become a reliable tool for women's safety and empowerment. Thank you for contributing to this mission!
 
-3. Start the Server
-
-    ```bash
-    npm start
-    ```
-
-### Frontend Setup
-
-1. Navigate to the Frontend Directory
-
-    ```bash
-    cd Dashabhuja-Frontend
-    ```
-
-2. Install Dependencies
-
-    ```bash
-    npm install
-    ```
-
-3. Start the Frontend App with Metro
-
-    **Note:** Ensure you have the React Native CLI installed and an Android device connected.
-
-    ```bash
-    npm start
-    ```
-
-Once both the backend and frontend servers are running, you can continue developing and testing the app.
-
-**Note:** Ensure your mobile device and computer are connected to the same WiFi network. Update the IP address in any hardcoded `axios` requests to reflect your computer’s IP, replacing `http://192.168.29.15:3000/` with `http://YOUR_COMPUTER_IP:3000/`.
-
----
-
-With your support, we can make Dashabhuja a reliable tool for women’s safety and empowerment. Thank you for contributing to this mission!
