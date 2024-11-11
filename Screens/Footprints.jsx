@@ -191,7 +191,7 @@ const Footprints = (props) => {
         if (destination) {
             interval = setInterval(() => {
                 fetchCurrentLocation();
-            }, 40000);
+            }, 10000);
         }
         return () => clearInterval(interval);
     }, [destination]);
@@ -199,7 +199,7 @@ const Footprints = (props) => {
     //TODO:
     const handleShareLinkwithOtherApps = async () => {
         try {
-            const url = 'https://dashabhuja.vercel.app/get-footprints/  ' + userdata.email;
+            const url = 'https://dashabhuja.vercel.app/get-footprints/' + userdata.email;
             const supported = await Linking.canOpenURL(url);
 
             console.log('Attempting to open URL:', url); // Debug log

@@ -1,43 +1,21 @@
-import {
-    Image,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    ToastAndroid,
-    ActivityIndicator
-} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import slideImage from '../assets/women_shop.png';
+import HeaderTab from './HeaderTab';
+import { ActivityIndicator, Image, SafeAreaView, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 
 const Shop = (props) => {
     const { userdata } = props.route.params;
-    console.log('userdata', userdata);
     const navigation = useNavigation();
     const [showLoad, setShowLoad] = useState(false);
-
-
     const [serverResponse, setServerResponse] = useState([]);
     const [cartItems, setCartItems] = useState([]);
 
-    const handleAddToCart = item => {
-        console.log('Add to cart');
-        ToastAndroid.show('Item added to Cart', ToastAndroid.SHORT);
-        console.log(item);
-        setCartItems([...cartItems, item]);
-    };
-
-
-    const handleOpenCart = () => {
-        navigation.navigate('AddToCart', {
-            cartItems: cartItems,
-            userAccount: userAccount,
-            user: user
-        });
+    const handleBuyNow = item => {
+        ToastAndroid.show('Processing your order...', ToastAndroid.SHORT);
+        navigation.navigate('Checkout', { item, userdata });
     };
 
     useEffect(() => {
@@ -48,148 +26,156 @@ const Shop = (props) => {
         try {
             setShowLoad(true);
             const response = await axios.get(
-                'https://plantit-backend.onrender.com/products',
+                'https://siddharthapro.in/app4/api/v1/commerce/get-products',
             );
-            console.log(response.data);
             setServerResponse(response.data);
             setShowLoad(false);
         } catch (error) {
             console.error('Error:', error);
+            ToastAndroid.show('Failed to load products', ToastAndroid.SHORT);
+            setShowLoad(false);
         }
     };
 
     return (
-        <SafeAreaView>
-            <StatusBar barStyle="light-content" backgroundColor="#E2F4C5" />
-            <ScrollView height="100%" keyboardShouldPersistTaps="always">
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', padding: 4 }}>
+            <HeaderTab />
+            <ScrollView
+                contentContainerStyle={{ paddingBottom: 20 }}
+                keyboardShouldPersistTaps="always"
+            >
+                <Image
+                    source={slideImage}
+                    style={{
+                        width: '100%',
+                        height: 200,
+                        resizeMode: 'cover',
+                    }}
+                />
                 {showLoad ? (
-                    <>
-                        <ActivityIndicator size="large" style={{ marginTop: 100 }} />
+                    <View
+                        style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingTop: 100,
+                        }}
+                    >
+                        <ActivityIndicator size="large" color="#0066CC" />
                         <Text
                             style={{
-                                textAlign: 'center',
-                                fontFamily: 'monospace',
-                                color: '#000000'
+                                marginTop: 12,
+                                fontSize: 16,
+                                color: '#666',
+                                fontFamily: 'System',
                             }}
                         >
-                            Getting the Best Products. . .
+                            Discovering amazing products for you...
                         </Text>
-                    </>
+                    </View>
                 ) : (
-                    <>
+                    <View style={{ padding: 12 }}>
                         {Object.keys(serverResponse).map(key => {
                             const item = serverResponse[key];
-                            const limitedDescription =
-                                item.description.length > 172
-                                    ? item.description.substring(0, 221) + '...'
-                                    : item.description;
+                            const limitedDescription = item.description.length > 120
+                                ? item.description.substring(0, 120) + '...'
+                                : item.description;
                             return (
                                 <View
                                     key={key}
                                     style={{
-                                        backgroundColor: '#F7EEDD',
-                                        padding: 5,
-                                        height: 215,
-                                        flexDirection: 'row',
-                                        marginTop: 5,
-                                        marginBottom: 5,
-                                        borderRadius: 10
+                                        backgroundColor: '#FFFFFF',
+                                        borderRadius: 12,
+                                        marginBottom: 16,
+                                        shadowColor: '#000',
+                                        shadowOffset: {
+                                            width: 0,
+                                            height: 2,
+                                        },
+                                        shadowOpacity: 0.1,
+                                        shadowRadius: 4,
+                                        elevation: 3,
+                                        overflow: 'hidden',
                                     }}
                                 >
                                     <Image
                                         source={{ uri: item.imageUrl }}
                                         style={{
-                                            minHeight: 200,
-                                            minWidth: 200,
-                                            borderRadius: 10,
-                                            marginRight: 10,
-                                            alignItems: 'center',
-                                            resizeMode: 'cover'
+                                            width: '100%',
+                                            height: 380,
+                                            resizeMode: 'cover',
                                         }}
                                     />
-                                    <View>
+                                    <View
+                                        style={{
+                                            padding: 16,
+                                        }}
+                                    >
                                         <Text
                                             style={{
-                                                fontFamily: 'monospace',
                                                 fontSize: 18,
-                                                fontWeight: '900',
-                                                marginTop: 10,
-                                                color: '#000000'
+                                                fontWeight: '600',
+                                                color: '#1A1A1A',
+                                                marginBottom: 8,
+                                                fontFamily: 'Ubuntu-Bold',
                                             }}
                                         >
                                             {item.name}
                                         </Text>
                                         <Text
                                             style={{
-                                                fontFamily: 'monospace',
-                                                fontSize: 10,
-                                                fontWeight: '800',
-                                                textAlign: 'left',
-                                                color: 'grey',
-                                                maxWidth: 200,
-                                                marginRight: 6,
-                                                maxHeight: 100,
-                                                minHeight: 70
+                                                fontSize: 14,
+                                                color: '#666666',
+                                                lineHeight: 20,
+                                                marginBottom: 16,
+                                                fontFamily: 'Ubuntu-Regular',
                                             }}
-                                            numberOfLines={6}
                                         >
                                             {limitedDescription}
                                         </Text>
-                                        <Text
+                                        <View
                                             style={{
-                                                fontFamily: 'monospace',
-                                                fontSize: 10,
-                                                fontWeight: '800',
-                                                textAlign: 'left',
-                                                color: 'black',
-                                                maxWidth: 200,
-                                                marginRight: 6,
-                                                marginTop: 10
+                                                flexDirection: 'row',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
                                             }}
-                                        >
-                                            Sold by - {item.seller}
-                                        </Text>
-                                        <Text
-                                            style={{
-                                                fontFamily: 'monospace',
-                                                fontSize: 15,
-                                                fontWeight: '800',
-                                                textAlign: 'left',
-                                                marginTop: 14,
-                                                color: '#000000'
-                                            }}
-                                        >
-                                            Price- {item.price}/-
-                                        </Text>
-                                        <TouchableOpacity
-                                            style={{
-                                                backgroundColor: '#FF204E',
-                                                height: 30,
-                                                borderRadius: 3,
-                                                width: 190
-                                            }}
-                                            onPress={() => {
-                                                handleAddToCart(item);
-                                            }} // Assuming handleAddToCart is defined elsewhere
                                         >
                                             <Text
                                                 style={{
-                                                    color: 'white',
-                                                    fontFamily: 'monospace',
-                                                    fontSize: 15,
-                                                    textAlign: 'center',
-                                                    marginTop: 'auto',
-                                                    marginBottom: 'auto'
+                                                    fontSize: 20,
+                                                    fontWeight: '700',
+                                                    color: '#1A1A1A',
+                                                    fontFamily: 'System',
                                                 }}
                                             >
-                                                Add to Cart
+                                                ₹{item.price}
                                             </Text>
-                                        </TouchableOpacity>
+                                            <TouchableOpacity
+                                                style={{
+                                                    backgroundColor: '#E90074',
+                                                    paddingHorizontal: 24,
+                                                    paddingVertical: 12,
+                                                    borderRadius: 8,
+                                                }}
+                                                onPress={() => handleBuyNow(item)}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        color: '#FFFFFF',
+                                                        fontSize: 16,
+                                                        fontWeight: '600',
+                                                        fontFamily: 'System',
+                                                    }}
+                                                >
+                                                    Buy Now
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </View>
                             );
                         })}
-                    </>
+                    </View>
                 )}
             </ScrollView>
         </SafeAreaView>

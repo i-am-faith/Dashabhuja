@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import TypeWriter from 'react-native-typewriter';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -28,8 +29,14 @@ const Splash = () => {
   };
 
   const navigation = useNavigation();
-  const navigateToLogin = () => {
-    navigation.navigate('Signup');
+  const navigateToLogin = async () => {
+    const jsonValue = await AsyncStorage.getItem('userdata');
+    const userdata = jsonValue != null ? JSON.parse(jsonValue) : null;
+    if (userdata) {
+      navigation.navigate('Home', { userdata });
+    } else {
+      navigation.navigate('Signup');
+    }
   };
 
   useEffect(() => {
@@ -109,7 +116,7 @@ const Splash = () => {
               color: '#510210',
               textAlign: 'center',
               fontWeight: '600',
-              marginBottom: 12,
+              marginBottom: 1,
               fontFamily: 'Ubuntu-Light',
               opacity: fadeAnim,
               transform: [{
@@ -126,7 +133,7 @@ const Splash = () => {
       </View>
 
       {/* Bottom Button Section */}
-      <View style={{ width: '50%', paddingBottom: 20, alignSelf: 'center' }}>
+      <View style={{ width: '50%', paddingBottom: 20, alignSelf: 'center', top: -30 }}>
         <TouchableOpacity
           style={{
             backgroundColor: '#FF5A5F',

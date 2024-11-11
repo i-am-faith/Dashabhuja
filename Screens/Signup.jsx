@@ -238,23 +238,25 @@ export default function SignupScreen() {
         </View>
 
         {/* Gender Input */}
-        <View style={{margin:3}}>
+        <View style={{ margin: 3 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: errors.gender ? '#FF0000' : '#DDDDDD', borderRadius: 8, paddingHorizontal: 10, backgroundColor: '#FFFFFF', elevation: 2 }}>
             <Users color={errors.gender ? '#FF0000' : '#FF5A5F'} size={24} />
             <SelectList
               data={[{ key: 'male', value: 'Male' }, { key: 'female', value: 'Female' }]}
+              style={{ flex: 1, height: 50, marginLeft: 10, borderWidth: 0, color: '#000000', backgroundColor: '#FFFFFF' }}
               setSelected={setSelected}
               placeholder="Select Gender"
-              boxStyles={{ flex: 1, height: 50, marginLeft: 10, borderWidth: 0 }}
-              textStyles={{ color: '#000000', fontFamily: 'Ubuntu-Light', fontSize: 18 }}
-              dropdownStyles={{ borderWidth: 1, borderColor: '#DDDDDD', borderRadius: 8, backgroundColor: '#FFFFFF' }}
+              search={false}
+              placeholderTextColor="#999999"
+              boxStyles={{ flex: 1, height: 50, marginLeft: 10, borderWidth: 0, color: '#000000', backgroundColor: '#FFFFFF' }}
+              textStyles={{ color: '#000000', fontFamily: 'Ubuntu-Light', fontSize: 28 }}
+              dropdownStyles={{ borderWidth: 0, borderColor: '#DDDDDD', borderRadius: 8, backgroundColor: '#FFFFFF' }}
               editable={!isLoading}
             />
           </View>
           {renderError('gender')}
         </View>
-
-        <TouchableOpacity 
+        <TouchableOpacity
           style={{
             backgroundColor: '#FF5A5F',
             padding: 15,

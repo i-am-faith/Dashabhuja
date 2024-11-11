@@ -1,85 +1,60 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-dupe-keys */
 /* eslint-disable react-native/no-inline-styles */
+
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StatusBar, Text, TouchableOpacity, View, Image, Alert, PermissionsAndroid, Platform, ToastAndroid, ScrollView } from 'react-native';
+import {
+  SafeAreaView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  ToastAndroid,
+  ScrollView,
+  Platform,
+  PermissionsAndroid,
+  RefreshControl,
+  ActivityIndicator,
+} from 'react-native';
 import Shake from 'react-native-shake';
-import BackgroundService from 'react-native-background-actions';
 import Geolocation from '@react-native-community/geolocation';
 import { SendDirectSms } from 'react-native-send-direct-sms';
 import RNImmediatePhoneCall from 'react-native-immediate-phone-call';
 import { useNavigation } from '@react-navigation/native';
-import TrackPlayer from 'react-native-track-player';
-
-import { Bell, Shield, MapPin, Volume2, AlertCircle, Award, BookOpen, Briefcase, UserSearch, ShoppingBag, HeartPulseIcon, VolumeX, PersonStanding, Footprints } from 'lucide-react-native';
 import axios from 'axios';
+import {
+  Shield,
+  Footprints,
+  AlertCircle,
+  PersonStanding,
+  ShoppingBag,
+  UserSearch
+} from 'lucide-react-native';
 import HeaderTab from './HeaderTab';
-import { set } from 'mongoose';
+import LottieView from 'lottie-react-native';
 
 const Home = (props) => {
   const { userdata } = props.route.params;
-  console.log('userdata', userdata);
-  const [sosPlaying, setSosPlaying] = useState(false);
   const navigation = useNavigation();
 
-  const setupPlayer = async () => {
-    try {
-      await TrackPlayer.setupPlayer();
-    } catch (error) {
-      console.log('Error in setupPlayer', error);
-    }
-  };
-  const playSOSSound = async () => {
-    if (sosPlaying) {
-      TrackPlayer.stop();
-      setSosPlaying(false);
-      return;
-    }
-    try {
-      const track = await TrackPlayer.add({
-        id: 'sos',
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-        title: 'SOS',
-        artist: 'SOS',
-        genre: 'SOS',
-        date: new Date(),
-      });
-      await TrackPlayer.play();
-      setSosPlaying(true);
-      setTimeout(() => {
-        TrackPlayer.stop();
-        TrackPlayer.reset();
+  // State to manage refresh and loading indicators
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-      }, 30000);
-    } catch (error) {
-      console.log('Error in playSOSSound', error);
-    }
-  };
-  const navigateToSOSAlertSettings = () => {
-    navigation.navigate('SOSAlertSettings', { userdata });
-  };
-  const navigateToReportIncidents = () => {
-    navigation.navigate('ReportingIncidents', { userdata });
-  };
-  const handleNavigateToShop = () => {
-    navigation.navigate('Shop', { userdata });
-  };
-  const handleNavigatetoCommunity = () => {
-    navigation.navigate('Community', { userdata });
-  };
-  const handleNavigatetoFootprints = () => {
-    navigation.navigate('Footprints', { userdata });
-  };
-  const navigatetoYoga = () => {
-    navigation.navigate('Yoga');
-  };
+  // Navigation Handlers
+  const navigateToSOSAlertSettings = () => navigation.navigate('SOSAlertSettings', { userdata });
+  const navigateToReportIncidents = () => navigation.navigate('ReportingIncidents', { userdata });
+  const handleNavigateToShop = () => navigation.navigate('Shop', { userdata });
+  const handleNavigatetoCommunity = () => navigation.navigate('Community', { userdata });
+  const handleNavigatetoFootprints = () => navigation.navigate('Footprints', { userdata });
+  const navigatetoYoga = () => navigation.navigate('Yoga');
+
+  // Request location permissions on Android
   const requestLocationPermission = async () => {
-    try {
-      console.log('Requesting location permission...');
-      console.log('Platform:', Platform.OS);
-      if (Platform.OS === 'android') {
+    if (Platform.OS === 'android') {
+      try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
@@ -90,25 +65,28 @@ const Home = (props) => {
             buttonPositive: 'OK',
           },
         );
-        console.log('Location permission granted:', granted);
         return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
       }
-    } catch (err) {
-      console.warn(err);
-      return false;
     }
+    return true;
   };
+
+  // Fetch current location and update on the server
   const fetchCurrentLocation = async () => {
+    setLoading(true);
     const hasPermission = await requestLocationPermission();
     if (!hasPermission) {
-      console.log('Location permission denied');
-      Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
+      ToastAndroid.showWithGravityAndOffset(
         'Location permission denied',
         ToastAndroid.SHORT,
         ToastAndroid.BOTTOM,
         25,
-        50
+        50,
       );
+      setLoading(false);
       return;
     }
 
@@ -122,331 +100,200 @@ const Home = (props) => {
       });
 
       const { latitude, longitude } = position.coords;
-      console.log('Location found:', latitude, longitude);
+      ToastAndroid.showWithGravityAndOffset('Updating location...', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50);
 
-      Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
-        'Updating location...',
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM,
-        25,
-        50
-      );
-
-      try {
-        const response = await axios.post(
-          'https://siddharthapro.in/app4/api/v1/user/update-recent-location',
-          { email: userdata.email, latitude, longitude }
-        );
-        console.log('Update recent location response:', response.data);
-
-        Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
-          'Location updated successfully',
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM,
-          25,
-          50
-        );
-      } catch (locationUpdateError) {
-        console.log('Error updating location:', locationUpdateError);
-      }
-
-      // Fetching alert status
-      Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
-        'Fetching Alerts...',
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM,
-        25,
-        50
-      );
-
-      try {
-        const alertResponse = await axios.post(
-          'https://siddharthapro.in/app4/api/v1/user/fetch-alerts',
-          { email: userdata.email, latitude, longitude }
-        );
-        // console.log('Alert response:', alertResponse.data);
-        // console.log('Alert Raised by:', alertResponse.data[0].issuedBy);
-
-        // Check if there are any alerts issued by someone else
-        if (alertResponse.data?.length > 0 && alertResponse.data[0].issuedBy !== userdata.email) {
-          const data = {
-            alertData: alertResponse.data[0],
-            latitude,
-            longitude,
-          };
-          console.log('Navigating to Alert:', data);
-          navigation.navigate('Alert', { data });
-        }
-      } catch (alertFetchError) {
-        console.log('Error fetching alerts:', alertFetchError);
-      }
-
-    } catch (error) {
-      console.log('Error getting location:', error);
-    }
-  };//TODO: SetTimeOut to Check Alert Status
-  const emergencySOS = async () => {
-    try {
-      console.log('Finding location...');
-
-      const position = await new Promise((resolve, reject) => {
-        Geolocation.getCurrentPosition(
-          resolve,
-          reject,
-          { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
-        );
+      // Update recent location
+      await axios.post('https://siddharthapro.in/app4/api/v1/user/update-recent-location', {
+        email: userdata.email,
+        latitude,
+        longitude,
       });
 
-      const { latitude, longitude } = position.coords;
-      console.log('Location found:', latitude, longitude);
+      // Fetch alert status
+      ToastAndroid.showWithGravityAndOffset('Fetching Alerts...', ToastAndroid.SHORT, ToastAndroid.BOTTOM, 25, 50);
+      const alertResponse = await axios.post('https://siddharthapro.in/app4/api/v1/user/fetch-alerts', {
+        email: userdata.email,
+        latitude,
+        longitude,
+      });
 
-      // Prepare the emergency message
-      const message = `Emergency! Here's my location: https://maps.google.com/?q=${latitude},${longitude}`;
-
-      // Send SMS if autoSMS is enabled
-      if (userdata.autoSMS) {
-        try {
-          userdata.trustedContactsSMS.forEach(contact => {
-            contact && SendDirectSms(contact, message);
-          });
-          console.log('SMS sent to trusted contacts');
-
-          Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
-            'SMS sent to trusted contacts',
-            ToastAndroid.LONG,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } catch (smsError) {
-          console.error('Error sending SMS:', smsError);
-        }
-      } else {
-        console.log('SMS not sent to trusted contacts as autoSMS is disabled');
-        Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
-          'SMS not sent to trusted contacts as autoSMS is disabled',
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-          25,
-          50
-        );
+      if (alertResponse.data?.length > 0 && alertResponse.data[0].issuedBy !== userdata.email) {
+        navigation.navigate('Alert', { data: { alertData: alertResponse.data[0], latitude, longitude } });
       }
-
-      // Make emergency call if autoCall is enabled
-      if (userdata.autoCall && userdata.trustedContactPhone) {
-        try {
-          RNImmediatePhoneCall.immediatePhoneCall(userdata.trustedContactPhone);
-          console.log('Call sent to trusted contact');
-
-          Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
-            'Call sent to trusted contact',
-            ToastAndroid.LONG,
-            ToastAndroid.BOTTOM,
-            25,
-            50
-          );
-        } catch (callError) {
-          console.error('Error making call:', callError);
-        }
-      } else {
-        console.log('Call not sent as autoCall is disabled');
-        Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
-          'Call not sent to trusted contact as autoCall is disabled',
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-          25,
-          50
-        );
-      }
-
-      // Trigger Alert API
-      const response = await axios.post(
-        'https://siddharthapro.in/app4/api/v1/user/trigger-alert',
-        { email: userdata.email, latitude, longitude }
-      );
-      console.log('Trigger alert response:', response.data);
-
-      Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
-        'Alert triggered',
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50
-      );
-
     } catch (error) {
-      console.error('Error in emergencySOS:', error);
-      Platform.OS === 'android' && ToastAndroid.showWithGravityAndOffset(
-        'Failed to send emergency alert',
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50
-      );
+      console.log('Error getting or updating location:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
   };
 
+  // Handle Emergency SOS
+  const emergencySOS = async () => {
+    setLoading(true);
+    try {
+      const position = await new Promise((resolve, reject) => {
+        Geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 });
+      });
+
+      const { latitude, longitude } = position.coords;
+      const message = `Hi there, I am in Emergency! Here's my location: https://maps.google.com/?q=${latitude},${longitude}. This message was sent by ${userdata.name} from Dashabhuja App.`;
+
+      // Send SMS to trusted contacts if enabled
+      if (userdata.autoSMS) {
+        userdata.trustedContactsSMS.forEach(contact => contact && SendDirectSms(contact, message));
+        ToastAndroid.showWithGravityAndOffset('SMS sent to trusted contacts', ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50);
+      }
+
+      // Make an emergency call to trusted contact if enabled
+      if (userdata.autoCall && userdata.trustedContactPhone) {
+        RNImmediatePhoneCall.immediatePhoneCall(userdata.trustedContactPhone);
+        ToastAndroid.showWithGravityAndOffset('Call sent to trusted contact', ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50);
+      }
+
+      // Trigger Alert API
+      await axios.post('https://siddharthapro.in/app4/api/v1/user/trigger-alert', { email: userdata.email, latitude, longitude });
+      ToastAndroid.showWithGravityAndOffset('Alert triggered', ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50);
+    } catch (error) {
+      console.error('Error in emergencySOS:', error);
+      ToastAndroid.showWithGravityAndOffset('Failed to send emergency alert', ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchCurrentLocation();
-    }, 90000);
-    return () => clearInterval(interval);
+    const intervalId = setInterval(() => fetchCurrentLocation(), 30000);
+    return () => clearInterval(intervalId);
   }, []);
 
-
   useEffect(() => {
-    requestLocationPermission();
     fetchCurrentLocation();
-    // setupPlayer();
-    const shakeSubscription = Shake.addListener(() => {
-      console.log('Shake detected');
-      emergencySOS().catch(error => console.log('Error in emergencySOS', error));
-    });
+    Shake.addListener(emergencySOS);
     return () => {
-      shakeSubscription.remove();
-      BackgroundService.stop();
+      Shake.removeAllListeners();
     };
   }, []);
-
 
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', height: '100%', padding: 4 }}>
       <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
       <HeaderTab />
-      <ScrollView style={{ height: '100%', backgroundColor: '#FFFFFF' }}>
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Image
-            source={require('../assets/dashabhuja.png')}
-            style={{ width: 300, height: 300, marginBottom: 20, alignSelf: 'center' }}
-          />
+      <ScrollView
+        style={{ height: '100%', backgroundColor: '#FFFFFF' }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchCurrentLocation(); }} />
+        }
+      >
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 35, marginBottom: 35 }}>
+          <LottieView source={require('../Screens/Assets/Yellow-glow.json')} autoPlay loop style={{ width: 400, height: 400, position: 'absolute' }} speed={2} />
+          <Image source={require('../assets/dashabhuja.png')} style={{ width: 300, height: 300, zIndex: 10 }} />
         </View>
 
         <View style={{ marginTop: 0, borderTopColor: '#4A4947', borderTopWidth: 1, paddingTop: 8 }}>
-          <TouchableOpacity style={{ backgroundColor: '#EF4444', height: 80, borderRadius: 10, flexDirection: 'row', padding: 10 }}
-            onPress={() => emergencySOS('+919038471652', 'Message Sent from App')}
+          <TouchableOpacity
+            style={{ backgroundColor: '#EF4444', height: 80, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center', elevation: 2 }}
+            onPress={emergencySOS}
           >
-            <View style={{ marginLeft: 'auto', justifyContent: 'center' }}>
-              <Shield color="#FFFFFF" size={28} style={{ marginRight: 10 }} />
-            </View>
-            <View style={{ marginRight: 'auto', justifyContent: 'center' }}>
-              <Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'Ubuntu-Regular', fontWeight: '900' }}>
-                Emergency SOS
-              </Text>
-              <Text style={{ color: '#FFFFFF', fontSize: 14, fontFamily: 'Ubuntu-Light', fontWeight: '200' }}>
-                Press & hold to activate
-              </Text>
+            <Shield color="#FFFFFF" size={28} style={{ marginRight: 10, alignSelf: 'center' }} />
+            <View>
+              <Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'Ubuntu-Bold' }}>Emergency SOS</Text>
+              <Text style={{ color: '#FFFFFF', fontSize: 14, fontFamily: 'Ubuntu-Light' }}>Press & hold to activate</Text>
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
 
-          <TouchableOpacity style={{ flex: 1, height: 105, elevation: 4, borderRadius: 10, backgroundColor: '#FFFFFF', elevation: 2, alignItems: 'center', justifyContent: 'center' }}
-            onPress={navigateToSOSAlertSettings}
-          >
-            <Shield color="#000000" size={28} style={{ marginBottom: 5 }} />
-            <Text style={{ color: '#000000', fontSize: 18, fontFamily: 'Ubuntu-Regular' }}>
-              SOS Alert
-            </Text>
-            <Text style={{ color: 'grey', fontSize: 13, fontFamily: 'Ubuntu-Light' }}>
-              One-tap emergency
-            </Text>
+        {/* Feature Buttons */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
+          <TouchableOpacity style={styles.featureButton} onPress={navigateToSOSAlertSettings}>
+            <Shield color="#000000" size={28} style={styles.iconSpacing} />
+            <Text style={styles.featureText}>SOS Alert</Text>
+            <Text style={styles.subText}>One-tap emergency</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity style={{ flex: 1, height: 105, borderRadius: 10, backgroundColor: '#FFFFFF', elevation: 2, alignItems: 'center', justifyContent: 'center', marginLeft: 4, marginRight: 4 }}
-            onPress={handleNavigatetoFootprints}
-          >
-            <Footprints color="#000000" size={28} style={{ marginBottom: 5 }} />
-            <Text style={{ color: '#000000', fontSize: 18, fontFamily: 'Ubuntu-Regular' }}>
-              Live Footprints
-            </Text>
-            <Text style={{ color: 'grey', fontSize: 13, fontFamily: 'Ubuntu-Light' }}>
-              Share with contacts
-            </Text>
+          <TouchableOpacity style={styles.featureButton} onPress={handleNavigatetoFootprints}>
+            <Footprints color="#000000" size={28} style={styles.iconSpacing} />
+            <Text style={styles.featureText}>Live Footprints</Text>
+            <Text style={styles.subText}>Share with contacts</Text>
           </TouchableOpacity>
-
-          {/* <TouchableOpacity style={{ flex: 1, height: 125, borderRadius: 10, backgroundColor: '#FFFFFF', elevation: 2, alignItems: 'center', justifyContent: 'center' }}
-            onPress={() => { playSOSSound(); }}
-          >
-            {!sosPlaying ? (
-              <>
-                <Volume2 color="#000000" size={28} style={{ marginBottom: 5 }} />
-                <Text style={{ color: '#000000', fontSize: 18, fontFamily: 'Ubuntu-Regular' }}>
-                  Safety Alarm
-                </Text>
-                <Text style={{ color: 'grey', fontSize: 13, fontFamily: 'Ubuntu-Light' }}>
-                  Trigger loud alert
-                </Text>
-              </>
-            ) : (
-              <>
-                <VolumeX color="red" size={28} style={{ marginBottom: 5 }} />
-                <Text style={{ color: '#000000', fontSize: 18, fontFamily: 'Ubuntu-Regular' }}>
-                  Safety Alarm
-                </Text>
-                <Text style={{ color: 'grey', fontSize: 13, fontFamily: 'Ubuntu-Light' }}>
-                  Trigger silent alert
-                </Text>
-              </>
-            )}
-          </TouchableOpacity> */}
-
         </View>
-        <View />
-        <View style={{ paddingTop: 10 }}>
-          <TouchableOpacity style={{ backgroundColor: '#FEF2F2', height: 90, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}
-            onPress={() => { navigateToReportIncidents(); }}
-          >
-            <View style={{ backgroundColor: '#FFFFFF', padding: 8, borderRadius: 30, marginRight: 10 }}>
-              <AlertCircle color="#DC2626" size={28} />
-            </View>
-            <View style={{ marginRight: 'auto' }}>
-              <Text style={{ color: '#111827', fontSize: 20, fontFamily: 'Ubuntu-Regular' }}>Report Incidents</Text>
-              <Text style={{ color: '#4B5563', fontSize: 14, fontFamily: 'Ubuntu-Light' }}>Document and report safely</Text>
-            </View>
-          </TouchableOpacity>
 
-          <TouchableOpacity style={{ marginTop: 8, backgroundColor: '#EFF6FF', height: 90, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}
-            onPress={() => { navigatetoYoga(); }}
-          >
-            <View style={{ backgroundColor: '#FFFFFF', padding: 8, borderRadius: 30, marginRight: 10 }}>
-              <PersonStanding color="#2563EB" size={28} />
-            </View>
-            <View style={{ marginRight: 'auto' }}>
-              <Text style={{ color: '#111827', fontSize: 20, fontFamily: 'Ubuntu-Regular' }}>Health and Wellness</Text>
-              <Text style={{ color: '#4B5563', fontSize: 14, fontFamily: 'Ubuntu-Light' }}>Yoga, exercise and health tips</Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* <TouchableOpacity style={{ marginTop: 8, backgroundColor: '#ECFDF5', height: 90, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}
-            onPress={() => { handleNavigateToShop(); }}
-          >
-            <View style={{ backgroundColor: '#FFFFFF', padding: 8, borderRadius: 30, marginRight: 10 }}>
-              <ShoppingBag color="#16A34A" size={28} />
-            </View>
-            <View style={{ marginRight: 'auto' }}>
-              <Text style={{ color: '#111827', fontSize: 20, fontFamily: 'Ubuntu-Regular' }}>Shop</Text>
-              <Text style={{ color: '#4B5563', fontSize: 14, fontFamily: 'Ubuntu-Light' }}>Empower businesses run by women</Text>
-            </View>
-          </TouchableOpacity> */}
-
-          <TouchableOpacity style={{ marginTop: 8, backgroundColor: '#F5F3FF', height: 90, borderRadius: 10, flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}
-            onPress={() => { handleNavigatetoCommunity(); }}
-          >
-            <View style={{ backgroundColor: '#FFFFFF', padding: 8, borderRadius: 30, marginRight: 10 }}>
-              <UserSearch color="#7E22CE" size={28} />
-            </View>
-            <View style={{ marginRight: 'auto' }}>
-              <Text style={{ color: '#111827', fontSize: 20, fontFamily: 'Ubuntu-Regular' }}>Community</Text>
-              <Text style={{ color: '#4B5563', fontSize: 14, fontFamily: 'Ubuntu-Light' }}>Join the community for Women</Text>
-            </View>
-          </TouchableOpacity>
-
-        </View>
+        {/* Additional Action Buttons */}
+        <ActionButton
+          backgroundColor="#FEF2F2"
+          icon={<AlertCircle color="#DC2626" size={28} />}
+          title="Report Incidents"
+          subtitle="Document and report safely"
+          onPress={navigateToReportIncidents}
+        />
+        <ActionButton
+          backgroundColor="#EFF6FF"
+          icon={<PersonStanding color="#2563EB" size={28} />}
+          title="Yoga & Fitness"
+          subtitle="Learn self-defense and Yoga"
+          onPress={navigatetoYoga}
+        />
+        <ActionButton
+          backgroundColor="#ECFDF5"
+          icon={<ShoppingBag color="#16A34A" size={28} />}
+          title="Shop "
+          subtitle="Empower businesses run by women"
+          onPress={handleNavigateToShop}
+        />
+        <ActionButton
+          backgroundColor="#F5F3FF"
+          icon={<UserSearch color="violet" size={28} />}
+          title="Connect Community"
+          subtitle="Join community for support"
+          onPress={handleNavigatetoCommunity}
+        />
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Home;
+// Reusable Action Button Component
+const ActionButton = ({ backgroundColor, icon, title, subtitle, onPress }) => (
+  <TouchableOpacity style={[styles.actionButton, { backgroundColor }]} onPress={onPress}>
+    {icon}
+    <View style={{ marginLeft: 10 }}>
+      <Text style={styles.featureText}>{title}</Text>
+      <Text style={styles.subText}>{subtitle}</Text>
+    </View>
+  </TouchableOpacity>
+);
 
+const styles = {
+  featureButton: {
+    backgroundColor: '#FAFAFA',
+    height: 110,
+    borderRadius: 10,
+    width: '49.5%',
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 2,
+  },
+  actionButton: {
+    height: 80,
+    borderRadius: 10,
+    flexDirection: 'row',
+    padding: 15,
+    marginTop: 8,
+    alignItems: 'center',
+  },
+  iconSpacing: {
+    marginBottom: 10,
+  },
+  featureText: {
+    color: '#000000',
+    fontSize: 20,
+    fontFamily: 'Ubuntu-Regular',
+  },
+  subText: {
+    color: '#6B7280',
+    fontSize: 14,
+    fontFamily: 'Ubuntu-Light',
+  },
+};
+
+export default Home;

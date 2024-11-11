@@ -15,11 +15,19 @@ import ViewPost from './Screens/ViewPost';
 import Alert from './Screens/Alert';
 import Yoga from './Screens/Yoga';
 import Footprints from './Screens/Footprints';
+import Checkout from './Screens/Checkout';
+import Payment from './Screens/Payment';
+import { Appearance } from 'react-native';
 
 
 const Stack = createStackNavigator();
 
 const App = () => {
+  const colorScheme = Appearance.getColorScheme();
+  console.log(colorScheme);
+  if(colorScheme === 'dark'){
+    Appearance.setColorScheme('light');
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -37,6 +45,8 @@ const App = () => {
         <Stack.Screen name="Alert" component={Alert} options={{ headerShown: false }} />
         <Stack.Screen name="Yoga" component={Yoga} options={{ headerShown: false }} />
         <Stack.Screen name="Footprints" component={Footprints} options={{ headerShown: false }} />
+        <Stack.Screen name="Checkout" component={Checkout} options={{ headerShown: false }} />
+        <Stack.Screen name="Payment" component={Payment} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

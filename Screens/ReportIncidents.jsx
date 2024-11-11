@@ -94,6 +94,7 @@ export default function ReportIncidents(props) {
               padding: 12,
               fontSize: 16,
               color: '#333',
+              fontFamily: 'Ubuntu-Regular',
             }}
             value={title}
             onChangeText={setTitle}
@@ -112,6 +113,7 @@ export default function ReportIncidents(props) {
               fontSize: 16,
               height: 100,
               textAlignVertical: 'top',
+              fontFamily: 'Ubuntu-Regular',
               color: '#333',
             }}
             value={description}

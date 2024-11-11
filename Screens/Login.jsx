@@ -1,9 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, ActivityIndicator, Alert, ToastAndroid } from 'react-native';
 import { Mail, Lock } from 'lucide-react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -29,6 +31,12 @@ export default function LoginScreen() {
     setIsLoading(true);
     try {
       const response = await axios.post('https://siddharthapro.in/app4/api/v1/user/login', { email, password });
+      await AsyncStorage.setItem(
+        'userdata',
+        JSON.stringify(response.data),
+      ).then(() => {
+        ToastAndroid.show('Login successful saving credentials', ToastAndroid.SHORT);
+      });
       navigation.navigate('Home', { userdata: response.data });
     } catch (error) {
       console.log('Login error:', error);

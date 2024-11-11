@@ -8,7 +8,8 @@ const HeaderTab = () => {
     const navigation = useNavigation();
     const handleViewIncidents = () => {
         navigation.navigate('Incidents');
-    }
+    };
+
     return (
         <View style={{ flexDirection: 'row' }}>
             <View style={{ backgroundColor: '#FFFFFF' }}>
@@ -23,9 +24,7 @@ const HeaderTab = () => {
                 <Bell color="#4A4947" size={28} />
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-export default HeaderTab
-
-const styles = StyleSheet.create({})
+export default HeaderTab;

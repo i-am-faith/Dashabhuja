@@ -22,6 +22,7 @@ import {
 } from 'lucide-react-native';
 import HeaderTab from './HeaderTab';
 import LottieView from 'lottie-react-native';
+import { WebView } from 'react-native-webview';
 
 const { width } = Dimensions.get('window');
 
@@ -57,7 +58,7 @@ const Yoga = () => {
 
   const openLink = async () => {
     try {
-      const url = 'https://dasabhuja.streamlit.app/';
+      const url = 'https://dashabhuja.streamlit.app/';
       const supported = await Linking.canOpenURL(url);
       
       console.log('Attempting to open URL:', url); // Debug log
@@ -112,6 +113,7 @@ const Yoga = () => {
             ))}
           </View>
         </View>
+        {/* <WebView source={{ uri: 'https://dashabhuja.streamlit.app/' }} style={{ marginTop: 20, height: 500, width: '100%' }} /> */}
       </ScrollView>
     </SafeAreaView>
   );

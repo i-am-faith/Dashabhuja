@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MICROPHONE" />
+
 
     <!-- Add queries for URL handling -->
     <queries>
@@ -28,6 +30,12 @@
         <package android:name="com.android.chrome" />
         <package android:name="com.android.browser" />
         <package android:name="org.mozilla.firefox" />
+        
+        <package android:name="com.phonepe.app" />                        //Phonepe
+        <package android:name="com.google.android.apps.nbu.paisa.user" /> // GPay
+        <package android:name="net.one97.paytm" />                        // Paytm
+        <package android:name="in.org.npci.upiapp" />                     // BHIM
+        <package android:name="in.amazon.mShop.android.shopping" />       // AmazonPay
     </queries>
 
     <application
@@ -63,6 +71,8 @@
         android:name=".YourServiceClassName"
         android:exported="false"
         android:permission="android.permission.BIND_JOB_SERVICE" />
+
+            <service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" android:foregroundServiceType="shortService"/>
 
     </application>
 </manifest>

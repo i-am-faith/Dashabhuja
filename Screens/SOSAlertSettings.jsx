@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { Bell, CircleUserRound, MessageSquare, Phone } from 'lucide-react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
+import HeaderTab from './HeaderTab';
 const SOSAlertSettings = (props) => {
   const { userdata } = props.route.params;
   // console.log('userdata', userdata);
@@ -87,26 +89,19 @@ const SOSAlertSettings = (props) => {
         <ActivityIndicator size="large" color="#E90074" animating={showLoader} />
       </View>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <StatusBar barStyle={'dark-content'} />
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-        <View style={{ flexDirection: 'row' }}>
-          <View style={{ backgroundColor: '#FFFFFF' }}>
-            <Text style={{ color: '#E90074', fontSize: 24, fontFamily: 'Samarkan' }}>
-              Dashabhuja
-            </Text>
-            <Text style={{ color: '#000000', fontSize: 14, fontFamily: 'Ubuntu-Regular' }}>
-              Empowerment & Protection
-            </Text>
-          </View>
-          <TouchableOpacity style={{ marginLeft: 'auto', marginTop: 10 }}>
-            <Bell color="#4A4947" size={28} />
-          </TouchableOpacity>
-        </View>
+        <HeaderTab/>
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Image source={require('../assets/maadurga.jpg')} style={{ width: '50%', height: 180 }} />
+          <LottieView
+            source={require('../Screens/Assets/Girlwalk.json')}
+            autoPlay
+            loop
+            style={{ width: '100%', height: 400 }}
+          />
         </View>
-
-        <View style={{ backgroundColor: '#F4F6FF', borderRadius: 8, padding: 15, borderWidth: 1, borderColor: '#000000', marginTop: 20 }}>
+        <Text style={{ color: '#000000', fontSize: 24, fontFamily: 'Ubuntu-Bold', paddingLeft:8, top:-50 }}>Emergency SOS Settings</Text>
+        <Text style={{ color: '#999999', fontSize: 18, fontFamily: 'Ubuntu-Light', paddingLeft:8, top:-45 }}>Set your emergency contacts and preferences here to alert them in case of emergency.</Text>
+        <View style={{ backgroundColor: '#FFFFFF', borderRadius: 8, padding: 10, borderColor: '#000000', marginTop: 0, top:-45 }}>
           <Text style={{ color: '#000000', fontSize: 18, fontFamily: 'Ubuntu-Bold' }}>
             Automatic Actions
           </Text>
@@ -136,7 +131,7 @@ const SOSAlertSettings = (props) => {
           </View>
         </View>
 
-        <View>
+        <View style={{ backgroundColor: '#FFFFFF', borderRadius: 8, padding: 10, borderColor: '#000000', marginTop: 20, top:-75 }}>
           <TouchableOpacity style={{ marginTop: 20 }}>
             <Text style={{ color: '#000000', fontSize: 18, fontFamily: 'Ubuntu-Bold' }}>
               Emergency Contacts to Notify via SMS
@@ -182,7 +177,7 @@ const SOSAlertSettings = (props) => {
             onPress={() => {
               handleSaveSettings();
             }}
-            style={{ marginTop: 80, marginLeft: 'auto', marginRight: 'auto', backgroundColor: '#000000', padding: 15, borderRadius: 10 }}
+            style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto', backgroundColor: '#E90074', width: '50%', alignItems: 'center', padding: 15, borderRadius: 10 }}
           >
             <Text style={{ color: '#FFFFFF', fontSize: 16, fontFamily: 'Ubuntu-Light' }}>
               Save Settings
