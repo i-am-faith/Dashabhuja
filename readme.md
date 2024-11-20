@@ -46,11 +46,13 @@ git clone https://github.com/siddharthamukherjee/Dashabhuja.git
    npm start
    ```
 
-## Team
+## Team Members
+<a href="https://dashabhuja-team.netlify.app/">Team Dashabhuja</a> 
 
-**Note**: Ensure you have the React Native CLI installed and an Android device connected.
+## Note
+1. Ensure you have the React Native CLI installed and an Android device connected.
 
-**Note**: Our backend server is hosted on Digital Ocean and can be accessed through the app. Currently, we do not provide a way to run it locally on your machine, but we will soon release the API documentation for the backend.
+2. Our backend server is hosted on Digital Ocean and can be accessed through the app. Currently, we do not provide a way to run it locally on your machine, but we will soon release the API documentation for the backend.
 
 With your support, Dashabhuja can become a reliable tool for women's safety and empowerment. Thank you for contributing to this mission!
 
