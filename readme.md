@@ -46,6 +46,8 @@ git clone https://github.com/siddharthamukherjee/Dashabhuja.git
    npm start
    ```
 
+## Team
+
 **Note**: Ensure you have the React Native CLI installed and an Android device connected.
 
 **Note**: Our backend server is hosted on Digital Ocean and can be accessed through the app. Currently, we do not provide a way to run it locally on your machine, but we will soon release the API documentation for the backend.
